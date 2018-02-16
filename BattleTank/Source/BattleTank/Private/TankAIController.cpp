@@ -2,23 +2,31 @@
 
 #include "TankAIController.h"
 #include "BattleTank.h"
+#include "Engine/World.h"
+
 
 void ATankAIController::BeginPlay()
 {
-	UE_LOG(LogTemp, Warning, TEXT("AI controller begin play"))
-	auto AIControlledTank = GetAIControlledTank();
-	if (!AIControlledTank)
+	auto PlayerTank = GetAIControlledTank();
+	if (!PlayerTank)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AI controller not possesing a tank."));
+		UE_LOG(LogTemp, Warning, TEXT("AI controller cannot find player tank"));
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AI controller possesing: %s"), *AIControlledTank->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("AI controller found player: %s"), *PlayerTank->GetName());
 	}
 }
 
 ATank* ATankAIController::GetAIControlledTank() const
 {
 	return Cast<ATank>(GetPawn());
+}
+
+ATank * ATankAIController::GetPlayerTank() const
+{
+	auto PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
+	if (!PlayerPawn) { return nullptr; }
+	return Cast<ATank>(PlayerPawn);
 }
 
